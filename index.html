@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Alex Rivera — Contact Card</title>
+<meta name="description" content="You found my card — here's how to reach me." />
+<meta name="theme-color" content="#0A0B0F" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    position:relative; min-height:100vh; min-height:100dvh;
+    background:#0A0B0F; color:#F4F4F6; font-family:'Inter',system-ui,sans-serif;
+    overflow-x:hidden;
+    padding-left:env(safe-area-inset-left); padding-right:env(safe-area-inset-right);
+  }
+  .display{ font-family:'Space Grotesk',system-ui,sans-serif; }
+  a{ color:inherit; }
+  button{ font-family:inherit; }
+
+  /* ---------- ambient background ---------- */
+  .bg-scene{ position:fixed; inset:0; overflow:hidden; z-index:0; pointer-events:none; }
+  .blob{ position:absolute; border-radius:9999px; filter:blur(90px); opacity:.32; animation:floatBlob 20s ease-in-out infinite; }
+  .blob-a{ width:480px; height:480px; top:-140px; left:-120px; background:#5B4FE0; }
+  .blob-b{ width:420px; height:420px; bottom:-160px; right:-100px; background:#1E9CB8; animation-delay:-7s; }
+  .blob-c{ width:320px; height:320px; top:40%; left:60%; background:#B03B7A; opacity:.2; animation-delay:-13s; }
+  .grid-overlay{ position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size:44px 44px; mask-image:radial-gradient(ellipse 70% 55% at 50% 20%, black, transparent); -webkit-mask-image:radial-gradient(ellipse 70% 55% at 50% 20%, black, transparent); }
+  .cursor-glow{ position:fixed; top:0; left:0; width:440px; height:440px; border-radius:9999px; background:radial-gradient(circle, rgba(139,124,246,.14), transparent 70%); pointer-events:none; opacity:0; transition:opacity .3s ease; z-index:1; will-change:transform; }
+
+  @keyframes floatBlob{ 0%,100%{ transform:translate(0,0) scale(1);} 33%{ transform:translate(24px,-28px) scale(1.06);} 66%{ transform:translate(-18px,22px) scale(.95);} }
+
+  /* ---------- hero ---------- */
+  .hero{ position:relative; z-index:2; min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:max(28px, env(safe-area-inset-top)) 24px 100px; overflow:hidden; }
+
+  .radar-wrap{ position:absolute; top:44%; left:50%; width:0; height:0; z-index:0; }
+  .radar-ring{ position:absolute; top:50%; left:50%; border:1px solid rgba(139,124,246,.4); border-radius:9999px; transform:translate(-50%,-50%); animation:radarPulse 4s ease-out infinite; }
+  .radar-ring:nth-child(2){ animation-delay:1.3s; border-color:rgba(45,212,232,.35); }
+  .radar-ring:nth-child(3){ animation-delay:2.6s; border-color:rgba(255,107,139,.3); }
+  @keyframes radarPulse{ 0%{ width:24px; height:24px; opacity:.7;} 100%{ width:560px; height:560px; opacity:0;} }
+
+  .scan-line{ position:absolute; left:0; right:0; top:-2px; height:1px; background:linear-gradient(90deg, transparent, #7CE7F6, transparent); opacity:0; animation:scanSweep 1.6s ease-in-out .35s 1 forwards; z-index:1; }
+  @keyframes scanSweep{ 0%{ top:0; opacity:0;} 12%{ opacity:1;} 88%{ opacity:1;} 100%{ top:100%; opacity:0;} }
+
+  .eyebrow{ position:relative; z-index:2; display:inline-flex; align-items:center; gap:8px; font-size:.72rem; letter-spacing:.24em; text-transform:uppercase; color:#9BE3EE; opacity:0; animation:fadeUp .7s ease forwards; animation-delay:.05s; margin-bottom:22px; }
+  .eyebrow-dot{ width:6px; height:6px; border-radius:9999px; background:#5EEAD4; animation:dotPulse 1.8s ease-in-out infinite; }
+  @keyframes dotPulse{ 0%{ box-shadow:0 0 0 0 rgba(94,234,212,.55);} 70%{ box-shadow:0 0 0 8px rgba(94,234,212,0);} 100%{ box-shadow:0 0 0 0 rgba(94,234,212,0);} }
+
+  .headline{ position:relative; z-index:2; font-size:clamp(2.3rem, 9vw, 4.4rem); line-height:1.06; font-weight:700; letter-spacing:-.02em; margin:0; }
+  .headline .word{ display:inline-block; opacity:0; transform:translateY(26px); filter:blur(6px); animation:wordReveal .85s cubic-bezier(.2,.8,.2,1) forwards; background:linear-gradient(180deg,#FFFFFF,#B9BAC4); -webkit-background-clip:text; background-clip:text; color:transparent; margin-right:.28em; }
+  .headline .word.emoji{ -webkit-text-fill-color:initial; background:none; color:initial; filter:none; }
+  @keyframes wordReveal{ to{ opacity:1; transform:translateY(0); filter:blur(0);} }
+
+  .subheading{ position:relative; z-index:2; margin-top:18px; font-size:clamp(1rem,3vw,1.2rem); color:#A6A9B4; opacity:0; animation:fadeUp .8s ease forwards; animation-delay:.85s; }
+  .signature{ position:relative; z-index:2; margin-top:10px; font-size:.92rem; font-style:italic; color:#6F7380; opacity:0; animation:fadeUp .8s ease forwards; animation-delay:1.05s; }
+  @keyframes fadeUp{ from{ opacity:0; transform:translateY(14px);} to{ opacity:1; transform:translateY(0);} }
+
+  .scroll-cue{ position:absolute; bottom:max(28px, env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%); z-index:2; display:flex; flex-direction:column; align-items:center; gap:6px; opacity:0; animation:fadeUp .8s ease forwards; animation-delay:1.35s; background:none; border:none; color:#7A7E8A; cursor:pointer; }
+  .scroll-cue span{ font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; }
+  .scroll-chevron{ animation:bounce 1.8s ease-in-out infinite; }
+  @keyframes bounce{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(7px);} }
+
+  /* ---------- contact section ---------- */
+  .contact-section{ position:relative; z-index:2; max-width:640px; margin:0 auto; padding:24px 20px 40px; }
+  .section-eyebrow{ font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:#7A7E8A; text-align:center; margin-bottom:22px; }
+  .section-eyebrow::before, .section-eyebrow::after{ content:''; display:inline-block; width:18px; height:1px; background:#3A3D46; vertical-align:middle; }
+  .section-eyebrow::before{ margin-right:10px; }
+  .section-eyebrow::after{ margin-left:10px; }
+
+  .cards-grid{ display:grid; grid-template-columns:1fr; gap:16px; }
+  @media (min-width:640px){ .cards-grid{ grid-template-columns:1fr 1fr; } }
+
+  .card{ position:relative; display:flex; flex-direction:column; justify-content:space-between; gap:22px; min-height:118px; padding:22px; border-radius:26px; text-decoration:none; color:inherit; background:linear-gradient(160deg, rgba(255,255,255,.055), rgba(255,255,255,.018)); border:1px solid rgba(255,255,255,.09); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); overflow:hidden; isolation:isolate; box-shadow:0 18px 40px -22px rgba(0,0,0,.6); opacity:0; transform:translateY(26px) scale(.97); cursor:pointer; }
+  .cards-visible .card{ animation:cardIn .7s cubic-bezier(.2,.8,.2,1) forwards; }
+  .cards-visible .card:nth-child(1){ animation-delay:.05s; }
+  .cards-visible .card:nth-child(2){ animation-delay:.13s; }
+  .cards-visible .card:nth-child(3){ animation-delay:.21s; }
+  .cards-visible .card:nth-child(4){ animation-delay:.29s; }
+  @keyframes cardIn{ to{ opacity:1; transform:translateY(0) scale(1);} }
+  .card:active{ transform:scale(.97) !important; transition:transform .12s ease !important; }
+  .card:focus-visible{ outline:2px solid #7CE7F6; outline-offset:3px; }
+  .card::after{ content:''; position:absolute; inset:0; border-radius:inherit; background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%), var(--card-glow,rgba(255,255,255,.12)), transparent 65%); opacity:0; transition:opacity .35s ease; pointer-events:none; }
+  .card:hover::after{ opacity:1; }
+  .card-sheen{ position:absolute; top:0; left:-60%; width:40%; height:100%; background:linear-gradient(100deg, transparent, rgba(255,255,255,.14), transparent); transform:skewX(-16deg); transition:left .7s ease; pointer-events:none; }
+  .card:hover .card-sheen{ left:130%; }
+
+  .card-top{ position:relative; display:flex; align-items:flex-start; justify-content:space-between; }
+  .card-icon{ width:52px; height:52px; border-radius:16px; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 22px -8px rgba(0,0,0,.5); }
+  .card-icon svg{ width:22px; height:22px; }
+  .card-arrow{ color:#5C606B; transition:transform .3s ease, color .3s ease; }
+  .card:hover .card-arrow{ transform:translate(3px,-3px); color:#F4F4F6; }
+
+  .card-text{ display:flex; flex-direction:column; gap:3px; }
+  .card-label{ font-family:'Space Grotesk',system-ui,sans-serif; font-size:1.06rem; font-weight:600; }
+  .card-value{ font-size:.86rem; color:#8A8F9B; }
+
+  .card:hover .icon-call svg{ animation:ringWiggle .55s ease-in-out infinite; }
+  @keyframes ringWiggle{ 0%,100%{ transform:rotate(0);} 20%{ transform:rotate(-16deg);} 40%{ transform:rotate(13deg);} 60%{ transform:rotate(-9deg);} 80%{ transform:rotate(5deg);} }
+  .card:hover .icon-instagram svg{ animation:shutterPulse .5s ease-in-out infinite; }
+  @keyframes shutterPulse{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.14) rotate(-4deg);} }
+  .card:hover .icon-email svg{ animation:envelopeFlap .7s ease-in-out infinite; }
+  @keyframes envelopeFlap{ 0%,100%{ transform:translateY(0) rotate(0);} 50%{ transform:translateY(-3px) rotate(-7deg);} }
+  .card:hover .icon-website svg{ animation:globeSpin 2.6s linear infinite; }
+  @keyframes globeSpin{ from{ transform:rotate(0);} to{ transform:rotate(360deg);} }
+
+  .ripple{ position:absolute; width:14px; height:14px; margin-left:-7px; margin-top:-7px; border-radius:9999px; background:rgba(255,255,255,.5); pointer-events:none; animation:rippleAnim .6s ease-out forwards; }
+  @keyframes rippleAnim{ from{ transform:scale(0); opacity:.5;} to{ transform:scale(9); opacity:0;} }
+
+  /* ---------- footer ---------- */
+  .footer{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:8px; padding:32px 20px max(40px, env(safe-area-inset-bottom)); text-align:center; }
+  .footer-line{ display:flex; align-items:center; gap:8px; color:#9599A3; font-size:.92rem; }
+  .footer-icon{ animation:twinkle 2.4s ease-in-out infinite; color:#7CE7F6; }
+  .footer-heart{ animation:heartbeat 1.8s ease-in-out infinite; color:#FF6B8B; }
+  @keyframes twinkle{ 0%,100%{ opacity:.5; transform:scale(1);} 50%{ opacity:1; transform:scale(1.18);} }
+  @keyframes heartbeat{ 0%,100%{ transform:scale(1);} 25%{ transform:scale(1.18);} 40%{ transform:scale(1);} }
+  .footer-sub{ font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:#4D505A; }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+    .headline .word, .subheading, .signature, .eyebrow, .scroll-cue, .card{ opacity:1 !important; transform:none !important; filter:none !important; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="bg-scene" aria-hidden="true">
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+    <div class="blob blob-c"></div>
+    <div class="grid-overlay"></div>
+  </div>
+  <div id="cursorGlow" class="cursor-glow" aria-hidden="true"></div>
+
+  <main>
+    <section class="hero">
+      <div class="radar-wrap" aria-hidden="true">
+        <span class="radar-ring"></span>
+        <span class="radar-ring"></span>
+        <span class="radar-ring"></span>
+      </div>
+      <span class="scan-line" aria-hidden="true"></span>
+
+      <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Signal detected</p>
+
+      <h1 class="headline display" id="headline"></h1>
+
+      <p class="subheading">Here&rsquo;s how you can reach me.</p>
+      <p class="signature" id="signatureLine"></p>
+
+      <button class="scroll-cue" id="scrollCue" aria-label="Scroll to contact options">
+        <span>Scroll</span>
+        <svg class="scroll-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+    </section>
+
+    <section class="contact-section" id="contactSection" aria-label="Contact options">
+      <p class="section-eyebrow">Choose a channel</p>
+      <div class="cards-grid" id="cardsGrid"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p class="footer-line">
+      <svg class="footer-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6.3 6.3l2 2M15.7 15.7l2 2M17.7 6.3l-2 2M8.3 15.7l-2 2"/></svg>
+      Thanks for finding me.
+      <svg class="footer-heart" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.1 2.3 4.5 6 4c2-.3 3.7.7 6 3 2.3-2.3 4-3.3 6-3 3.7.5 5.6 4.1 4 7.7C19.5 16.4 12 21 12 21z"/></svg>
+    </p>
+    <p class="footer-sub" id="footerSub"></p>
+  </footer>
+
+<script>
+  /* ============================================================
+     CONFIG — replace these five values with the real details.
+     Everything on the page is generated from this one object.
+     ============================================================ */
+  const CONFIG = {
+    NAME: "Alex Rivera",
+    PHONE_NUMBER: "+15551234567",
+    INSTAGRAM_URL: "https://instagram.com/alexrivera",
+    EMAIL_ADDRESS: "alex@example.com",
+    WEBSITE_URL: "https://alexrivera.dev",
+  };
+
+  function formatPhoneDisplay(raw) {
+    const digits = raw.replace(/[^\d]/g, "");
+    if (digits.length === 11 && digits.startsWith("1")) {
+      const d = digits.slice(1);
+      return "+1 (" + d.slice(0,3) + ") " + d.slice(3,6) + "-" + d.slice(6);
+    }
+    return raw;
+  }
+  function handleFromUrl(url) {
+    try { const p = new URL(url).pathname.replace(/\//g, ""); return p ? "@" + p : url; }
+    catch { return url; }
+  }
+  function domainFromUrl(url) {
+    try { return new URL(url).hostname.replace(/^www\./, ""); }
+    catch { return url; }
+  }
+
+  const ICONS = {
+    phone: '<svg viewBox="0 0 24 24" fill="none" stroke="#0A0B0F" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2.1L8 9.7a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2z"/></svg>',
+    instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="#0A0B0F" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1.1" fill="#0A0B0F" stroke="none"/></svg>',
+    mail: '<svg viewBox="0 0 24 24" fill="none" stroke="#0A0B0F" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="M3 6.5l9 6.5 9-6.5"/></svg>',
+    globe: '<svg viewBox="0 0 24 24" fill="none" stroke="#0A0B0F" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.3"/><path d="M2.7 12h18.6M12 2.7c2.6 2.6 4 6 4 9.3s-1.4 6.7-4 9.3c-2.6-2.6-4-6-4-9.3s1.4-6.7 4-9.3z"/></svg>',
+    arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>',
+  };
+
+  const CARDS = [
+    { id:"call", icon:ICONS.phone, iconClass:"icon-call", label:"Call me", value:formatPhoneDisplay(CONFIG.PHONE_NUMBER), href:"tel:"+CONFIG.PHONE_NUMBER, external:false, accent:"linear-gradient(135deg,#8B7CF6,#4C3FE0)", glow:"rgba(139,124,246,.45)" },
+    { id:"instagram", icon:ICONS.instagram, iconClass:"icon-instagram", label:"Instagram", value:handleFromUrl(CONFIG.INSTAGRAM_URL), href:CONFIG.INSTAGRAM_URL, external:true, accent:"linear-gradient(135deg,#F6A15B,#DD2A7B 55%,#8134AF)", glow:"rgba(221,42,123,.4)" },
+    { id:"email", icon:ICONS.mail, iconClass:"icon-email", label:"Email me", value:CONFIG.EMAIL_ADDRESS, href:"mailto:"+CONFIG.EMAIL_ADDRESS, external:false, accent:"linear-gradient(135deg,#34D8E8,#2563EB)", glow:"rgba(52,216,232,.4)" },
+    { id:"website", icon:ICONS.globe, iconClass:"icon-website", label:"Visit my website", value:domainFromUrl(CONFIG.WEBSITE_URL), href:CONFIG.WEBSITE_URL, external:true, accent:"linear-gradient(135deg,#34D399,#0EA5E9)", glow:"rgba(52,211,153,.4)" },
+  ];
+
+  // Headline words
+  const headline = document.getElementById("headline");
+  ["You","found","my","card","👋"].forEach((w,i) => {
+    const span = document.createElement("span");
+    span.className = "word" + (w === "👋" ? " emoji" : "");
+    span.style.animationDelay = (0.15 + i*0.09) + "s";
+    span.textContent = w;
+    headline.appendChild(span);
+  });
+  document.getElementById("signatureLine").textContent = "— " + CONFIG.NAME;
+  document.getElementById("footerSub").textContent = CONFIG.NAME + " · Digital contact card";
+  document.title = CONFIG.NAME + " — Contact Card";
+
+  // Build cards
+  const grid = document.getElementById("cardsGrid");
+  CARDS.forEach((c) => {
+    const a = document.createElement("a");
+    a.href = c.href;
+    a.className = "card";
+    a.style.setProperty("--card-glow", c.glow);
+    a.setAttribute("aria-label", c.label + ": " + c.value);
+    if (c.external) { a.target = "_blank"; a.rel = "noopener noreferrer"; }
+
+    a.innerHTML =
+      '<span class="card-sheen" aria-hidden="true"></span>' +
+      '<span class="card-top">' +
+        '<span class="card-icon ' + c.iconClass + '" style="background:' + c.accent + '" aria-hidden="true">' + c.icon + '</span>' +
+        '<span class="card-arrow" aria-hidden="true">' + ICONS.arrow + '</span>' +
+      '</span>' +
+      '<span class="card-text">' +
+        '<span class="card-label">' + c.label + '</span>' +
+        '<span class="card-value">' + c.value + '</span>' +
+      '</span>';
+
+    a.addEventListener("mousemove", (e) => {
+      const r = a.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      a.style.transition = "transform 60ms linear";
+      a.style.transform = "perspective(700px) rotateX(" + (-py*8).toFixed(2) + "deg) rotateY(" + (px*10).toFixed(2) + "deg) translateY(-4px) scale(1.015)";
+      a.style.setProperty("--mx", ((px+0.5)*100) + "%");
+      a.style.setProperty("--my", ((py+0.5)*100) + "%");
+    });
+    a.addEventListener("mouseleave", () => {
+      a.style.transition = "transform 500ms cubic-bezier(.2,.8,.2,1)";
+      a.style.transform = "perspective(700px) rotateX(0) rotateY(0) translateY(0) scale(1)";
+    });
+    a.addEventListener("pointerdown", (e) => {
+      const r = a.getBoundingClientRect();
+      const span = document.createElement("span");
+      span.className = "ripple";
+      span.style.left = (e.clientX - r.left) + "px";
+      span.style.top = (e.clientY - r.top) + "px";
+      a.appendChild(span);
+      setTimeout(() => span.remove(), 650);
+    });
+
+    grid.appendChild(a);
+  });
+
+  // Cursor glow (desktop only)
+  if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    const glow = document.getElementById("cursorGlow");
+    window.addEventListener("mousemove", (e) => {
+      glow.style.transform = "translate(" + (e.clientX-220) + "px, " + (e.clientY-220) + "px)";
+      glow.style.opacity = "1";
+    });
+    window.addEventListener("mouseleave", () => { glow.style.opacity = "0"; });
+  }
+
+  // Reveal cards on scroll
+  const io = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting) { grid.classList.add("cards-visible"); io.disconnect(); }
+  }, { threshold: 0.2 });
+  io.observe(grid);
+
+  // Scroll cue
+  document.getElementById("scrollCue").addEventListener("click", () => {
+    document.getElementById("contactSection").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+</script>
+</body>
+</html>
